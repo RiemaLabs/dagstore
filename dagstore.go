@@ -270,6 +270,7 @@ func NewDAGStore(cfg Config) (*DAGStore, error) {
 
 // Start starts a DAG store.
 func (d *DAGStore) Start(ctx context.Context) error {
+	d.lk.Lock()
 	if err := d.restoreState(); err != nil {
 		// TODO add a lenient mode.
 		return fmt.Errorf("failed to restore dagstore state: %w", err)
@@ -318,6 +319,7 @@ func (d *DAGStore) Start(ctx context.Context) error {
 			}
 		}
 	}
+	d.lk.Unlock()
 
 	// spawn the control goroutine.
 	d.wg.Add(1)
@@ -387,7 +389,9 @@ type RegisterOpts struct {
 // This method returns an error synchronously if preliminary validation fails.
 // Otherwise, it queues the shard for registration. The caller should monitor
 // supplied channel for a result.
-func (d *DAGStore) RegisterShard(ctx context.Context, key shard.Key, mnt mount.Mount, out chan ShardResult, opts RegisterOpts) error {
+func (d *DAGStore) RegisterShard(
+	ctx context.Context, key shard.Key, mnt mount.Mount, out chan ShardResult, opts RegisterOpts,
+) error {
 	d.lk.Lock()
 	if _, ok := d.shards[key]; ok {
 		d.lk.Unlock()
@@ -517,6 +521,17 @@ func (d *DAGStore) GetShardInfo(k shard.Key) (ShardInfo, error) {
 	info := ShardInfo{ShardState: s.state, Error: s.err, refs: s.refs}
 	s.lk.RUnlock()
 	return info, nil
+}
+
+func (d *DAGStore) Stats() map[ShardState]int {
+	d.lk.RLock()
+	defer d.lk.RUnlock()
+
+	stats := make(map[ShardState]int)
+	for _, s := range d.shards {
+		stats[s.state]++
+	}
+	return stats
 }
 
 type AllShardsInfo map[shard.Key]ShardInfo
