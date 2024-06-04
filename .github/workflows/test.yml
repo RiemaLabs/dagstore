@@ -22,6 +22,7 @@ jobs:
           git config --global url."https://huchao66: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@github.com".insteadOf "https://github.com"
           cat ~/.gitconfig
           go mod tidy
+          go get github.com/ipfs/go-cidutil
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
