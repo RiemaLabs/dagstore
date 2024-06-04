@@ -21,6 +21,14 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: stable
+      - name: setup_config
+        run: |
+          git config --global url."https://huchao66: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@github.com".insteadOf "https://github.com"
+          cat ~/.gitconfig
+          go mod tidy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
