@@ -16,6 +16,8 @@ jobs:
   golangci:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      GH_ACCESS_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -23,12 +25,10 @@ jobs:
           go-version: stable
       - name: setup_config
         run: |
-          git config --global url."https://huchao66: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@github.com".insteadOf "https://github.com"
+          git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
           cat ~/.gitconfig
           go mod tidy
           go get github.com/ipfs/go-cidutil
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
