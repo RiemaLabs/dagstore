@@ -10,33 +10,7 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22.3'
-      - name: setup_config
-        run: |
-          git config --global url."https://huchao66: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@github.com".insteadOf "https://github.com"
-          cat ~/.gitconfig
-          go mod tidy
-          go get github.com/ipfs/go-cidutil
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install dependencies
-        run: go get .
-      - name: Build
-        run: go build -v ./...
-      - name: Test with the Go CLI
-        run: go test
-
-
-        
-  new_token:
-    name: use of new bot token
+    name: Build And Test
     runs-on: ubuntu-latest
     env:
       GOPRIVATE: github.com/RiemaLabs/nubit-kzg
