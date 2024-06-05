@@ -32,3 +32,29 @@ jobs:
         run: go build -v ./...
       - name: Test with the Go CLI
         run: go test
+
+
+        
+  new_token:
+    name: use of new bot token
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/RiemaLabs/nubit-kzg
+      GH_ACCESS_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.3'
+      - run: |
+          git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+          go mod tidy
+          go get github.com/ipfs/go-cidutil
+    
+      - name: Build
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test
+    
