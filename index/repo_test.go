@@ -5,6 +5,7 @@ import (
 
 	carindex "github.com/ipld/go-car/v2/index"
 	"github.com/multiformats/go-multicodec"
+
 	"golang.org/x/xerrors"
 
 	"github.com/filecoin-project/dagstore/shard"
@@ -42,6 +43,7 @@ func (s *fullIndexRepoSuite) TestAllMethods() {
 	require.EqualValues(t, 0, stat.Size)
 
 	l, err := r.Len()
+	require.NoError(t, err)
 	require.EqualValues(t, 0, l)
 
 	size, err := r.Size()

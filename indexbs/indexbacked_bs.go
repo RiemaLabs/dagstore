@@ -55,7 +55,10 @@ type IndexBackedBlockstore struct {
 
 func NewIndexBackedBlockstore(ctx context.Context, d IdxBstoreDagstore, shardSelector ShardSelectorF, maxCacheSize int, cacheExpire time.Duration) (blockstore.Blockstore, error) {
 	cache := ttlcache.NewCache()
-	cache.SetTTL(cacheExpire)
+	err := cache.SetTTL(cacheExpire)
+	if err != nil {
+		return nil, err
+	}
 	cache.SetCacheSizeLimit(maxCacheSize)
 	cache.SetExpirationReasonCallback(func(_ string, _ ttlcache.EvictionReason, val interface{}) {
 		// Ensure we close the blockstore for a shard when it's evicted from
@@ -63,7 +66,10 @@ func NewIndexBackedBlockstore(ctx context.Context, d IdxBstoreDagstore, shardSel
 		// TODO: add reference counting mechanism so that the blockstore does
 		// not get closed while there is an operation still in progress against it
 		abs := val.(*accessorWithBlockstore)
-		abs.sa.Close()
+		err := abs.sa.Close()
+		if err != nil {
+			return
+		}
 	})
 
 	return &IndexBackedBlockstore{
@@ -81,6 +87,7 @@ const (
 	BlockstoreOpGetSize = !BlockstoreOpGet
 )
 
+//nolint:gosimple
 func (o BlockstoreOp) String() string {
 	if o == BlockstoreOpGet {
 		return "Get"
@@ -208,7 +215,10 @@ func (ro *IndexBackedBlockstore) execOp(ctx context.Context, c cid.Cid, op Block
 		}
 
 		// Add the blockstore to the cache
-		ro.blockstoreCache.Set(sk.String(), &accessorWithBlockstore{sa, bs})
+		err = ro.blockstoreCache.Set(sk.String(), &accessorWithBlockstore{sa, bs})
+		if err != nil {
+			return nil, err
+		}
 
 		logbs.Debugw("Added new blockstore to cache", "cid", c, "shard", sk)
 

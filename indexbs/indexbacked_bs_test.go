@@ -61,7 +61,7 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 	var errg errgroup.Group
 
-	it.ForEach(func(mh multihash.Multihash, _ uint64) error {
+	err = it.ForEach(func(mh multihash.Multihash, _ uint64) error {
 
 		mhs := mh
 		errg.Go(func() error {
@@ -101,6 +101,9 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 		return nil
 	})
+	if err != nil {
+		return
+	}
 
 	require.NoError(t, errg.Wait())
 
@@ -114,7 +117,7 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 	rbs, err = NewIndexBackedBlockstore(ctx, ibsapi, fss, 10, time.Minute)
 	require.NoError(t, err)
-	it.ForEach(func(mh multihash.Multihash, u uint64) error {
+	err = it.ForEach(func(mh multihash.Multihash, u uint64) error {
 		c := cid.NewCidV1(cid.Raw, mh)
 
 		has, err := rbs.Has(ctx, c)
@@ -131,6 +134,9 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 		return nil
 	})
+	if err != nil {
+		return
+	}
 
 	// ------------------------------------------
 	// Test with a shard selector that returns ErrNoShardSelected
@@ -140,7 +146,7 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 	rbs, err = NewIndexBackedBlockstore(ctx, ibsapi, fss, 10, time.Minute)
 	require.NoError(t, err)
-	it.ForEach(func(mh multihash.Multihash, u uint64) error {
+	err = it.ForEach(func(mh multihash.Multihash, u uint64) error {
 		c := cid.NewCidV1(cid.Raw, mh)
 
 		// Has should return false
@@ -160,6 +166,9 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 		return nil
 	})
+	if err != nil {
+		return
+	}
 
 	// ------------------------------------------
 	// Test with a cid that isn't in the shard

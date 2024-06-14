@@ -2,6 +2,7 @@ package index
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	blocksutil "github.com/ipfs/go-ipfs-blocksutil"
@@ -12,8 +13,6 @@ import (
 	"github.com/ipfs/go-datastore/sync"
 
 	ds "github.com/ipfs/go-datastore"
-
-	"golang.org/x/xerrors"
 
 	"github.com/ipfs/go-cid"
 	"github.com/multiformats/go-multihash"
@@ -34,7 +33,7 @@ func TestDatastoreIndexEmpty(t *testing.T) {
 	idx := NewInverted(sync.MutexWrap(ds.NewMapDatastore()))
 
 	_, err = idx.GetShardsForMultihash(ctx, cid1.Hash())
-	req.True(xerrors.Is(err, ds.ErrNotFound))
+	req.True(errors.Is(err, ds.ErrNotFound))
 }
 
 func TestLevelDBBatch(t *testing.T) {

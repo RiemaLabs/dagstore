@@ -53,7 +53,7 @@ func TestFileMount(t *testing.T) {
 	require.Equal(t, b.Bytes(), read[:i])
 
 	// seek to the beginning and read the first byte.
-	n, err = reader.Seek(0, 0)
+	_, err = reader.Seek(0, 0)
 	require.NoError(t, err)
 	var b1 [1]byte
 	i, err = reader.Read(b1[:])

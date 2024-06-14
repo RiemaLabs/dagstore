@@ -57,7 +57,6 @@ func RecoverImmediately(ctx context.Context, dagst *DAGStore, failureCh chan Sha
 
 		case <-ctx.Done():
 			log.Info("failure handler: stopping")
-			attempts = nil
 			return
 		}
 	}
