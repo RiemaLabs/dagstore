@@ -284,7 +284,7 @@ func TestIndexBackedBlockstoreFuzz(t *testing.T) {
 				if err != nil {
 					return err
 				}
-				err := skerrg.Wait()
+				err = skerrg.Wait()
 				if err != nil {
 					return err
 				}
