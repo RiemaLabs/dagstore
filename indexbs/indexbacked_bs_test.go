@@ -244,7 +244,7 @@ func TestIndexBackedBlockstoreFuzz(t *testing.T) {
 
 			for i := 0; i < 10; i++ {
 				var skerrg errgroup.Group
-				it.ForEach(func(mh multihash.Multihash, _ uint64) error {
+				err := it.ForEach(func(mh multihash.Multihash, _ uint64) error {
 					mhs := mh
 					c := cid.NewCidV1(cid.Raw, mhs)
 					skerrg.Go(func() error {
@@ -281,6 +281,9 @@ func TestIndexBackedBlockstoreFuzz(t *testing.T) {
 
 					return nil
 				})
+				if err != nil {
+					return err
+				}
 				err := skerrg.Wait()
 				if err != nil {
 					return err
