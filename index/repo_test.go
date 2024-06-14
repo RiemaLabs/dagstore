@@ -108,8 +108,10 @@ func (s *fullIndexRepoSuite) TestAllMethods() {
 	require.EqualValues(t, 0, stat.Size)
 
 	l, err = r.Len()
+	require.NoError(t, err)
 	require.EqualValues(t, 0, l)
 
 	size, err = r.Size()
+	require.NoError(t, err)
 	require.EqualValues(t, 0, size)
 }
