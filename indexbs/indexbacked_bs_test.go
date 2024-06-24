@@ -1,3 +1,4 @@
+//nolint:errcheck // skip some error check
 package indexbs
 
 import (
@@ -61,7 +62,7 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 	var errg errgroup.Group
 
-	err = it.ForEach(func(mh multihash.Multihash, _ uint64) error {
+	it.ForEach(func(mh multihash.Multihash, _ uint64) error {
 
 		mhs := mh
 		errg.Go(func() error {
@@ -101,9 +102,6 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 		return nil
 	})
-	if err != nil {
-		return
-	}
 
 	require.NoError(t, errg.Wait())
 
@@ -117,7 +115,7 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 	rbs, err = NewIndexBackedBlockstore(ctx, ibsapi, fss, 10, time.Minute)
 	require.NoError(t, err)
-	err = it.ForEach(func(mh multihash.Multihash, u uint64) error {
+	it.ForEach(func(mh multihash.Multihash, u uint64) error {
 		c := cid.NewCidV1(cid.Raw, mh)
 
 		has, err := rbs.Has(ctx, c)
@@ -134,9 +132,6 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 		return nil
 	})
-	if err != nil {
-		return
-	}
 
 	// ------------------------------------------
 	// Test with a shard selector that returns ErrNoShardSelected
@@ -146,7 +141,7 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 	rbs, err = NewIndexBackedBlockstore(ctx, ibsapi, fss, 10, time.Minute)
 	require.NoError(t, err)
-	err = it.ForEach(func(mh multihash.Multihash, u uint64) error {
+	it.ForEach(func(mh multihash.Multihash, u uint64) error {
 		c := cid.NewCidV1(cid.Raw, mh)
 
 		// Has should return false
@@ -166,9 +161,6 @@ func TestIndexBackedBlockstore(t *testing.T) {
 
 		return nil
 	})
-	if err != nil {
-		return
-	}
 
 	// ------------------------------------------
 	// Test with a cid that isn't in the shard
@@ -244,7 +236,7 @@ func TestIndexBackedBlockstoreFuzz(t *testing.T) {
 
 			for i := 0; i < 10; i++ {
 				var skerrg errgroup.Group
-				err := it.ForEach(func(mh multihash.Multihash, _ uint64) error {
+				it.ForEach(func(mh multihash.Multihash, _ uint64) error {
 					mhs := mh
 					c := cid.NewCidV1(cid.Raw, mhs)
 					skerrg.Go(func() error {
@@ -281,10 +273,7 @@ func TestIndexBackedBlockstoreFuzz(t *testing.T) {
 
 					return nil
 				})
-				if err != nil {
-					return err
-				}
-				err = skerrg.Wait()
+				err := skerrg.Wait()
 				if err != nil {
 					return err
 				}

@@ -1,3 +1,4 @@
+//nolint:errcheck // skip some error check
 package indexbs
 
 import (
@@ -55,10 +56,7 @@ type IndexBackedBlockstore struct {
 
 func NewIndexBackedBlockstore(ctx context.Context, d IdxBstoreDagstore, shardSelector ShardSelectorF, maxCacheSize int, cacheExpire time.Duration) (blockstore.Blockstore, error) {
 	cache := ttlcache.NewCache()
-	err := cache.SetTTL(cacheExpire)
-	if err != nil {
-		return nil, err
-	}
+	cache.SetTTL(cacheExpire)
 	cache.SetCacheSizeLimit(maxCacheSize)
 	cache.SetExpirationReasonCallback(func(_ string, _ ttlcache.EvictionReason, val interface{}) {
 		// Ensure we close the blockstore for a shard when it's evicted from
@@ -66,10 +64,7 @@ func NewIndexBackedBlockstore(ctx context.Context, d IdxBstoreDagstore, shardSel
 		// TODO: add reference counting mechanism so that the blockstore does
 		// not get closed while there is an operation still in progress against it
 		abs := val.(*accessorWithBlockstore)
-		err := abs.sa.Close()
-		if err != nil {
-			return
-		}
+		abs.sa.Close()
 	})
 
 	return &IndexBackedBlockstore{
@@ -215,10 +210,7 @@ func (ro *IndexBackedBlockstore) execOp(ctx context.Context, c cid.Cid, op Block
 		}
 
 		// Add the blockstore to the cache
-		err = ro.blockstoreCache.Set(sk.String(), &accessorWithBlockstore{sa, bs})
-		if err != nil {
-			return nil, err
-		}
+		ro.blockstoreCache.Set(sk.String(), &accessorWithBlockstore{sa, bs})
 
 		logbs.Debugw("Added new blockstore to cache", "cid", c, "shard", sk)
 
