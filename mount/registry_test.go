@@ -26,7 +26,9 @@ func (m *MockMount) Serialize() *url.URL {
 		Scheme: "aaa", // random, will get replaced
 		Host:   m.Val,
 	}
-	u.Query().Set("size", strconv.FormatInt(m.StatSize, 10))
+	query := u.Query()
+	query.Set("size", strconv.FormatInt(m.StatSize, 10))
+	u.RawQuery = query.Encode()
 	return u
 }
 

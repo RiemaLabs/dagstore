@@ -6,6 +6,7 @@ require (
 	github.com/filecoin-project/dagstore v0.0.0-00010101000000-000000000000
 	github.com/ipfs/go-block-format v0.1.2
 	github.com/ipfs/go-cid v0.4.1
+	github.com/ipfs/go-cidutil v0.1.0 // indirect
 	github.com/ipfs/go-datastore v0.6.0
 	github.com/ipfs/go-ds-leveldb v0.5.0
 	github.com/ipfs/go-ipfs-blockstore v1.3.0

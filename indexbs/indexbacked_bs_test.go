@@ -1,3 +1,4 @@
+//nolint:errcheck // skip some error check
 package indexbs
 
 import (

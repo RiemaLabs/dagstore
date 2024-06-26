@@ -51,7 +51,7 @@ type Shard struct {
 	wRegister *waiter   // waiter for registration result.
 	wRecover  *waiter   // waiter for recovering an errored shard.
 	wAcquire  []*waiter // waiters for acquiring the shard.
-	wDestroy  *waiter   // waiter for shard destruction.
+	// wDestroy  *waiter   // waiter for shard destruction. commit reason: unused
 
 	refs uint32 // number of DAG accessors currently open
 }

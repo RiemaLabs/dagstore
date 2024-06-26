@@ -1,3 +1,4 @@
+//nolint:errcheck // skip some error check
 package indexbs
 
 import (
@@ -81,6 +82,7 @@ const (
 	BlockstoreOpGetSize = !BlockstoreOpGet
 )
 
+//nolint:gosimple
 func (o BlockstoreOp) String() string {
 	if o == BlockstoreOpGet {
 		return "Get"

@@ -26,7 +26,7 @@ func TestFSRepoVersions(t *testing.T) {
 	require.NoError(t, err)
 
 	// Expect the repo to have been initialized with the correct version
-	bs, err := os.ReadFile(repo.versionPath())
+	bs, _ := os.ReadFile(repo.versionPath())
 	require.Equal(t, repoVersion, string(bs))
 
 	// Verify we can create a new repo at the same path
@@ -36,6 +36,7 @@ func TestFSRepoVersions(t *testing.T) {
 	// Verify that creating a repo at a path with a higher different version
 	// returns an error
 	err = os.WriteFile(repo.versionPath(), []byte("2"), 0666)
+	require.NoError(t, err)
 	_, err = NewFSRepo(basePath)
 	require.Error(t, err)
 }
